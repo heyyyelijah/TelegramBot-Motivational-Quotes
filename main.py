@@ -4,13 +4,13 @@ import random
 
 
 API_KEY = config('API_KEY')
-bot = telebot.TeleBot(API_KEY)
+motivation_bot = telebot.TeleBot(API_KEY)
 motiv8URL = "https://type.fit/api/quotes"
 
 # creates a command that listens for a string called "greet"
-@bot.message_handler(commands=['hello'])
+@motivation_bot.message_handler(commands=['hello'])
 def greet(message):
-    bot.reply_to(message, 'Hey! How are you?')
+    motivation_bot.reply_to(message, 'Hey! How are you?')
 
 
 def motivate_me(message):
@@ -22,7 +22,7 @@ def motivate_me(message):
 
 
 # SENDS MOTIVATIONAL QUOTE
-@bot.message_handler(func=motivate_me)
+@motivation_bot.message_handler(func=motivate_me)
 def get_quote(message):
     # reads quotes from txt file
     with open("quotes_list.txt", encoding="utf-8") as file:
@@ -30,7 +30,7 @@ def get_quote(message):
         rand_num = random.randint( 0, (len(data) - 1) )
         # gets random quote
         quote = data[rand_num]
-        bot.send_message(message.chat.id,
+        motivation_bot.send_message(message.chat.id,
                          f'{quote}')
 
 
@@ -45,7 +45,7 @@ def add_quote_txtfile(message):
 
 
 # CREATE HANDLER FOR ADDING TO TXT FILE
-@bot.message_handler(func=add_quote_txtfile)
+@motivation_bot.message_handler(func=add_quote_txtfile)
 def add_quote(message):
     data = message.text.split()
     sentence_list = []
@@ -60,12 +60,13 @@ def add_quote(message):
         with open("quotes_list.txt", mode="a", encoding="utf-8") as file:
             file.write(f"{sentence_joined}\n")
 
-        bot.send_message(message.chat.id,
+        motivation_bot.send_message(message.chat.id,
                          f'quote successfully added')
     else:
-        bot.send_message(message.chat.id,
+        motivation_bot.send_message(message.chat.id,
                          f"your quote is too short, can't add it sorry")
 
 
 # keeps on running the bot to check for commands
-bot.polling(interval=3)
+
+motivation_bot.polling(interval=3)
