@@ -25,23 +25,27 @@ def motivate_me(message):
 @motivation_bot.message_handler(func=motivate_me)
 def get_quote(message):
     # reads quotes from txt file
-    with open("quotes_list.txt", encoding="utf-8") as file:
-        data = file.readlines()
-        rand_num = random.randint( 0, (len(data) - 1) )
-        # gets random quote
-        quote = data[rand_num]
-        motivation_bot.send_message(message.chat.id,
-                         f'{quote}')
-
+    try:
+        with open("quotes_list.txt", encoding="utf-8") as file:
+            data = file.readlines()
+            rand_num = random.randint( 0, (len(data) - 1) )
+            # gets random quote
+            quote = data[rand_num]
+            motivation_bot.send_message(message.chat.id,
+                             f'{quote}')
+    except:
+        motivation_bot.send_message(message.chat.id, 'error with retrieving quote.')
 
 def add_quote_txtfile(message):
-    r = message.text.split()
-    r = [word.lower() for word in r]
-    print(r)
-    if r[0] == "add" and r[1] == 'new' and r[2] == 'quote':
-        return True
-    else:
-        return False
+    try:
+        r = message.text.split()
+        r = [word.lower() for word in r]
+        if r[0] == "add" and r[1] == 'new' and r[2] == 'quote':
+            return True
+        else:
+            return False
+    except:
+        motivation_bot.send_message(message.chat.id, 'error with adding quote.')
 
 
 # CREATE HANDLER FOR ADDING TO TXT FILE
@@ -50,21 +54,24 @@ def add_quote(message):
     data = message.text.split()
     sentence_list = []
 
-    # checks if data message is a sentence and not blank
-    if len(data) > 5:
-        for each_word in data[3:]:
-            sentence_list.append(each_word)
-        # turns list to
-        sentence_joined = " ".join(sentence_list)
-        # APPENDS cleaned quote data to txt file
-        with open("quotes_list.txt", mode="a", encoding="utf-8") as file:
-            file.write(f"{sentence_joined}\n")
+    try:
+        # checks if data message is a sentence and not blank
+        if len(data) > 5:
+            for each_word in data[3:]:
+                sentence_list.append(each_word)
+            # turns list to
+            sentence_joined = " ".join(sentence_list)
+            # APPENDS cleaned quote data to txt file
+            with open("quotes_list.txt", mode="a", encoding="utf-8") as file:
+                file.write(f"{sentence_joined}\n")
 
-        motivation_bot.send_message(message.chat.id,
-                         f'quote successfully added')
-    else:
-        motivation_bot.send_message(message.chat.id,
-                         f"your quote is too short, can't add it sorry")
+            motivation_bot.send_message(message.chat.id,
+                             f'quote successfully added')
+        else:
+            motivation_bot.send_message(message.chat.id,
+                             f"your quote is too short, can't add it sorry")
+    except:
+        motivation_bot.send_message(message.chat.id, 'error with adding quote.')
 
 
 # keeps on running the bot to check for commands
